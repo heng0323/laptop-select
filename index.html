@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笔记本电脑选购助手</title>
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
+        body{background:#f4f7fa;padding:16px;color:#222}
+        .container{max-width:1100px;margin:0 auto}
+        h1{text-align:center;margin-bottom:20px;font-size:22px}
+        .filter-card{background:#fff;padding:20px;border-radius:12px;margin-bottom:18px;box-shadow:0 2px 8px #00000010}
+        .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:12px}
+        label{display:block;margin-bottom:4px;font-size:14px;color:#444}
+        select,input{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px}
+        button{padding:10px 16px;border:none;background:#2563eb;color:#fff;border-radius:8px;cursor:pointer;font-size:15px}
+        button:hover{background:#1d4ed8}
+        .result{margin-top:20px}
+        .item{background:#fff;padding:16px;border-radius:10px;margin-bottom:12px;box-shadow:0 2px 6px #00000008}
+        .item h3{margin-bottom:6px}
+        .star{color:#f59e0b;margin:6px 0}
+        .info{font-size:14px;color:#555;line-height:1.6}
+        .tag{display:inline-block;padding:3px 7px;background:#eef2ff;color:#2563eb;border-radius:4px;font-size:12px;margin:3px}
+        .market{margin-top:8px;padding:8px;background:#f8fafc;border-radius:6px;font-size:13px}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>💻 笔记本电脑选购助手</h1>
+    <div class="filter-card">
+        <div class="row">
+            <div>
+                <label>预算</label>
+                <select id="budget">
+                    <option value="all">全部预算</option>
+                    <option value="3000">3000以内</option>
+                    <option value="5000">3000-5000</option>
+                    <option value="7000">5000-7000</option>
+                    <option value="10000">7000-10000</option>
+                    <option value="10000+">10000以上</option>
+                </select>
+            </div>
+            <div>
+                <label>使用需求</label>
+                <select id="usage">
+                    <option value="all">全部</option>
+                    <option value="study">网课/办公学习</option>
+                    <option value="game">玩游戏</option>
+                    <option value="design">设计剪辑</option>
+                </select>
+            </div>
+            <div>
+                <label>显卡</label>
+                <select id="gpu">
+                    <option value="all">全部显卡</option>
+                    <option value="核显">核显</option>
+                    <option value="RTX4050">RTX4050</option>
+                    <option value="RTX4060">RTX4060</option>
+                    <option value="RTX4070">RTX4070</option>
+                    <option value="RTX4080">RTX4080</option>
+                    <option value="RTX5050">RTX5050</option>
+                    <option value="RTX5060">RTX5060</option>
+                    <option value="RTX5070">RTX5070</option>
+                </select>
+            </div>
+            <div>
+                <label>新旧</label>
+                <select id="type">
+                    <option value="all">新机+二手</option>
+                    <option value="new">全新机</option>
+                    <option value="second">二手</option>
+                </select>
+            </div>
+        </div>
+        <button onclick="filterLaptop()">开始筛选</button>
+    </div>
+    <div class="result" id="resultBox"></div>
+</div>
+
+<script>
+const laptopList = [
+    {
+        name:"机械革命极光X",
+        budget:"7000",
+        usage:"game",
+        gpu:"RTX5060",
+        type:"new",
+        star:"⭐⭐⭐⭐⭐",
+        info:"i5-14450HX，16G内存，1TB固态，2.5K 165Hz屏幕。性价比游戏本，适合打游戏、编程。",
+        market:"行情：全新约6999，二手成色好约4800-5500，二手注意检查电池和屏幕坏点。"
+    },
+    {
+        name:"联想拯救者Y9000P 2024",
+        budget:"10000",
+        usage:"game",
+        gpu:"RTX4070",
+        type:"new",
+        star:"⭐⭐⭐⭐⭐",
+        info:"i7-14700HX，16G，1TB，高色域高刷屏，散热优秀，售后网点多。",
+        market:"行情：全新9499，二手6000-7500，保值率高，热门机型。"
+    },
+    {
+        name:"惠普暗影精灵11",
+        budget:"7000",
+        usage:"game",
+        gpu:"RTX4060",
+        type:"new",
+        star:"⭐⭐⭐⭐",
+        info:"i7-14650HX，16G+1TB，屏幕素质不错，外观简约。",
+        market:"行情：全新6799，二手4500-5200，风扇噪音会稍微明显一点。"
+    },
+    {
+        name:"荣耀MagicBook14",
+        budget:"5000",
+        usage:"study",
+        gpu:"核显",
+        type:"new",
+        star:"⭐⭐⭐⭐",
+        info:"R7处理器，轻薄长续航，适合上课携带、网课办公。",
+        market:"行情：全新4499，二手2800-3500，适合文科学生。"
+    },
+    {
+        name:"华硕天选6 Pro",
+        budget:"10000",
+        usage:"game",
+        gpu:"RTX5070",
+        type:"new",
+        star:"⭐⭐⭐⭐",
+        info:"R9 9955HX，二次元外观，颜值高，游戏性能强。",
+        market:"行情：全新9999，二手7000左右，适合喜欢外观的同学。"
+    },
+    {
+        name:"ThinkPad X13 2022（二手）",
+        budget:"3000",
+        usage:"study",
+        gpu:"核显",
+        type:"second",
+        star:"⭐⭐⭐⭐",
+        info:"i5-1235U，16G内存，512G固态，商务轻薄，键盘手感好。",
+        market:"行情：二手2200-2800，适合纯网课文档，不适合游戏。"
+    },
+    {
+        name:"ROG魔霸新锐 2023",
+        budget:"7000",
+        usage:"game",
+        gpu:"RTX4060",
+        type:"second",
+        star:"⭐⭐⭐⭐",
+        info:"R7 H255，满血显卡，液金散热，性能释放强。",
+        market:"行情：二手4300-5000，注意液金版本有没有漏液风险。"
+    },
+    {
+        name:"MacBook Air M2",
+        budget:"7000",
+        usage:"study",
+        gpu:"核显",
+        type:"new",
+        star:"⭐⭐⭐⭐⭐",
+        info:"M2芯片，静音无风扇，超长续航，适合剪辑、学习。",
+        market:"行情：全新7499，二手5000-6200，苹果二手机水比较深，优先平台验机。"
+    },
+    {
+        name:"七彩虹 将星X15",
+        budget:"5000",
+        usage:"game",
+        gpu:"RTX4050",
+        type:"new",
+        star:"⭐⭐⭐",
+        info:"i5-13500HX，入门游戏本，预算有限想玩游戏可以选。",
+        market:"行情：全新4999，二手3000-3600，性价比入门款。"
+    }
+]
+
+function filterLaptop(){
+    const budgetSel = document.getElementById("budget").value;
+    const usageSel = document.getElementById("usage").value;
+    const gpuSel = document.getElementById("gpu").value;
+    const typeSel = document.getElementById("type").value;
+    let res = laptopList.filter(item=>{
+        let ok = true;
+        if(budgetSel !== "all"){
+            if(budgetSel === "10000+"){
+                if(item.budget !== "10000+") ok=false;
+            }else{
+                if(item.budget !== budgetSel) ok=false;
+            }
+        }
+        if(usageSel !== "all" && item.usage !== usageSel) ok=false;
+        if(gpuSel !== "all" && item.gpu !== gpuSel) ok=false;
+        if(typeSel !== "all" && item.type !== typeSel) ok=false;
+        return ok;
+    })
+    const box = document.getElementById("resultBox");
+    if(res.length === 0){
+        box.innerHTML = "<div style='text-align:center;padding:20px'>暂时没有匹配机型，请调整筛选条件</div>";
+        return;
+    }
+    let html = "";
+    res.forEach(i=>{
+        html += `
+        <div class="item">
+            <h3>${i.name} <span class="tag">${i.type==='new'?'全新':'二手'}</span></h3>
+            <div class="star">${i.star}</div>
+            <div class="info">显卡：${i.gpu} | ${i.info}</div>
+            <div class="market">📊行情说明：${i.market}</div>
+        </div>
+        `
+    })
+    box.innerHTML = html;
+}
+filterLaptop();
+</script>
+</body>
+</html>
